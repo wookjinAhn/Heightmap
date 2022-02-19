@@ -1,4 +1,4 @@
-#include "quadtree.h"
+#include "../include/heightmap.h"
 
 // ----- QHeightmap -----
 

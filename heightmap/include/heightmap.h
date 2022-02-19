@@ -95,7 +95,7 @@ private:
 class QNode
 {
 public:
-    QNode() : mBoundary() {}
+//    QNode() : mBoundary() {}
     QNode(QBoundary boundary, int depth, int capacity) : mBoundary(boundary), mDepth(depth), mCapacity(capacity) {}
     QNode(QBoundary boundary, int depth) : mBoundary(boundary), mDepth(depth) {}
 
