@@ -9,8 +9,8 @@ int main()
     float MAX_X = 1.0f;
     float Z = 2.0f;
     int DEPTH = 6;
-    QBoundary boundary(MIN_X, MAX_X, Z);
-    QNode qt(boundary, DEPTH);
+    quadtree::Boundary boundary(MIN_X, MAX_X, Z);
+    quadtree::Node qt(boundary, DEPTH);
 
     // ----- Read PCD file -----
     std::cout << "Read PCD File : ";
@@ -18,7 +18,7 @@ int main()
     std::string inputPath = "/home/wj/Desktop/Data/input_data/stair_real_rotated.pcd";
     start = clock();
 
-    std::vector<QPoint3D*> inputPoints = qt.ReadPCDToVector(inputPath);
+    std::vector<quadtree::Point3D*> inputPoints = qt.ReadPCDToVector(inputPath);
 
     end = clock();
     std::cout << ((double)(end - start)) / (long)CLOCKS_PER_SEC << " sec" << std::endl;
@@ -27,7 +27,7 @@ int main()
     std::cout << "Sampling : ";
     start = clock();
 
-    std::vector<QPoint3D*> samplingPoints = qt.SamplingPoints(inputPoints, 5000);
+    std::vector<quadtree::Point3D*> samplingPoints = qt.SamplingPoints(inputPoints, 5000);
 
     end = clock();
     std::cout << ((double)(end - start)) / (long)CLOCKS_PER_SEC << " sec" << std::endl;
