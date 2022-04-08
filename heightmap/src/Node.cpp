@@ -63,7 +63,15 @@ namespace quadtree
 
     void Node::SetHeightmap(quadtree::Heightmap* const heightmap)
     {
-        mHeightmap = heightmap;
+        if (!mHeightmap)
+        {
+            mHeightmap = heightmap;
+        }
+        else
+        {
+            delete mHeightmap;
+            mHeightmap = heightmap;
+        }
     }
 
     void Node::InsertPoints(std::vector<Point3D*> points)
