@@ -1,4 +1,4 @@
-#include "heightmap/include/heightmap.h"
+#include "heightmap/include/Node.h"
 
 int main()
 {
@@ -24,7 +24,7 @@ int main()
     std::vector<quadtree::Point3D*> inputPoints = qt.ReadPCDToVector(inputPath);
 
     end = clock();
-    std::cout << ((double)(end - start)) / (long)CLOCKS_PER_SEC << " sec \t" << inputPoints.size() << std::endl;
+    std::cout << ((double)(end - start)) / (long)CLOCKS_PER_SEC << " sec" << std::endl;
 
     // ----- sampling -----
     std::cout << "Sampling : ";
@@ -33,7 +33,7 @@ int main()
     std::vector<quadtree::Point3D*> samplingPoints = qt.SamplingPoints(inputPoints, 5000);
 
     end = clock();
-    std::cout << ((double)(end - start)) / (long)CLOCKS_PER_SEC << " sec \t" << samplingPoints.size() << std::endl;
+    std::cout << ((double)(end - start)) / (long)CLOCKS_PER_SEC << " sec" << std::endl;
 
     // ----- Get Height -----
     std::cout << "Get Heightmap : ";
@@ -43,7 +43,7 @@ int main()
     qt.InsertPoints(samplingPoints);
 
     end = clock();
-    std::cout << ((double)(end - start)) / (long)CLOCKS_PER_SEC << " sec \t" << samplingPoints.size() << std::endl;
+    std::cout << ((double)(end - start)) / (long)CLOCKS_PER_SEC << " sec" << std::endl;
 
     // ----- Write PCD file -----
     std::cout << "Write PCD File : ";
@@ -55,5 +55,4 @@ int main()
 
     end = clock();
     std::cout << ((double)(end - start)) / (long)CLOCKS_PER_SEC << " sec" << std::endl;
-
 }
