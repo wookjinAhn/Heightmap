@@ -1,7 +1,8 @@
-#include "../include/heightmap.h"
+#include "heightmap.h"
 
 namespace quadtree
 {
+
     void Heightmap::MakeHeightMap(Point3D* points)	// { <x, z>, <y, dividNum> }
     {
         if (mMapPair.find(std::make_pair(points->GetEndNodeXZ().GetX(), points->GetEndNodeXZ().GetZ())) == mMapPair.end())	// exist
@@ -25,7 +26,7 @@ namespace quadtree
         }
     }
 
-    // ----- QNode -----
+// ----- QNode -----
 
     void Node::subdivide()
     {
@@ -95,6 +96,8 @@ namespace quadtree
 
     std::vector<Point3D*> Node::ReadPCDToVector(std::string inputPath)
     {
+        mPoints.reserve(307200);
+
         std::ifstream fin;
         fin.open(inputPath);
 
@@ -126,14 +129,23 @@ namespace quadtree
     {
         std::vector<Point3D*> samplingPoints;
 
-        std::random_device random;
-        std::uniform_int_distribution<int> range(0, inputPoints.size() - 1);
+        std::vector<int> sample(inputPoints.size());
+        std::iota(sample.begin(), sample.end(), 0);
+        std::shuffle(sample.begin(), sample.end(), std::mt19937{std::random_device{}()});
+
+        float degree = -45.0f;
+        float rotationMatrix[3][3] = { {1.0f, 0.0f, 0.0f},
+                                       {0.0f, (float)std::cos(degree * D2R), (float)-std::sin(degree * D2R)},
+                                       {0.0f, (float)std::sin(degree * D2R), (float)std::cos(degree * D2R)} };
 
         for (int i = 0; i < samplingNum; i++)
         {
-            int randomIndex = range(random);
-            samplingPoints.push_back(inputPoints[randomIndex]);
+            inputPoints[sample[i]]->SetXYZ(rotationMatrix[0][0] * inputPoints[sample[i]]->GetX() + rotationMatrix[0][1] * inputPoints[sample[i]]->GetY() + rotationMatrix[0][2] * inputPoints[sample[i]]->GetZ(),
+                                           rotationMatrix[1][0] * inputPoints[sample[i]]->GetX() + rotationMatrix[1][1] * inputPoints[sample[i]]->GetY() + rotationMatrix[1][2] * inputPoints[sample[i]]->GetZ(),
+                                           rotationMatrix[1][0] * inputPoints[sample[i]]->GetX() + rotationMatrix[2][1] * inputPoints[sample[i]]->GetY() + rotationMatrix[2][2] * inputPoints[sample[i]]->GetZ());
+            samplingPoints.push_back(inputPoints[sample[i]]);
         }
+
         return samplingPoints;
     }
 
@@ -186,4 +198,5 @@ namespace quadtree
 
         fout.close();
     }
+
 }

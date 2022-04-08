@@ -12,6 +12,11 @@
 #include <string>
 #include <vector>
 
+
+const double PI = 3.14159265359;
+const double D2R = PI / 180;
+const double R2D = 180 / PI;
+
 namespace quadtree
 {
     class Point2D
@@ -23,8 +28,8 @@ namespace quadtree
         float GetX() const { return mX; }
         float GetZ() const { return mZ; }
 
-        void SetX(float x) { this->mX = x; }
-        void SetZ(float z) { this->mZ = z; }
+        void SetX(float x) { mX = x; }
+        void SetZ(float z) { mZ = z; }
 
     private:
         float mX, mZ;
@@ -41,12 +46,12 @@ namespace quadtree
         float GetZ() const { return mZ; }
         Point2D GetEndNodeXZ() const { return mEndNodeXZ; }
 
-        void SetX(float x) { this->mX = x; }
-        void SetY(float y) { this->mY = y; }
-        void SetZ(float z) { this->mZ = z; }
-        void SetXYZ(float x, float y, float z) { this->mX = x; this->mY = y; this->mZ = z; }
-        void SetEndNodeXZ(Point2D endNodeXZ) { this->mEndNodeXZ = endNodeXZ; }
-        void SetEndNodeXZ(float x, float z) { this->mEndNodeXZ.SetX(x); this->mEndNodeXZ.SetZ(z); }
+        void SetX(float x) { mX = x; }
+        void SetY(float y) { mY = y; }
+        void SetZ(float z) { mZ = z; }
+        void SetXYZ(float x, float y, float z) { mX = x; mY = y; mZ = z; }
+        void SetEndNodeXZ(Point2D endNodeXZ) { mEndNodeXZ = endNodeXZ; }
+        void SetEndNodeXZ(float x, float z) { mEndNodeXZ.SetX(x); mEndNodeXZ.SetZ(z); }
 
     private:
         float mX, mY, mZ;
@@ -65,7 +70,7 @@ namespace quadtree
         float GetW() const { return mW; }
         float GetH() const { return mH; }
 
-        void SetBoundary(float x, float z, float w, float h) { this->mX = x; this->mZ = z; this->mW = w; this->mH = h; }
+        void SetBoundary(float x, float z, float w, float h) { mX = x; mZ = z; mW = w; mH = h; }
 
         bool IsConstained(Point3D* p) const { return (p->GetX() >= mX - mW && p->GetX() < mX + mW && p->GetZ() >= mZ - mH && p->GetZ() < mZ + mH); }
 
@@ -115,6 +120,7 @@ namespace quadtree
         void SetDepth(int depth) { this->mDepth = depth; }
         void SetCapacity(int capacity) { this->mCapacity = capacity; }
         void SetPoints(std::vector<Point3D*> points) { this->mPoints = points; }
+        void SetHeightmap(quadtree::Heightmap* heightmap) { mHeightmap = heightmap; }
 
         void InsertPoints(std::vector<Point3D*> points);
         std::vector<Point3D*> SamplingPoints(std::vector<Point3D*> inputPoints, int samplingNum);
@@ -125,7 +131,7 @@ namespace quadtree
         void subdivide();
         void insertNode(Point3D* p, Heightmap* heightmap, int depth);
 
-        Heightmap* mHeightmap = new Heightmap();
+        Heightmap* mHeightmap = nullptr;
         Boundary mBoundary;
         int mCapacity;
         int mDepth;
@@ -139,6 +145,5 @@ namespace quadtree
         std::unique_ptr<Node> mSW = nullptr;
         std::unique_ptr<Node> mSE = nullptr;
     };
-
 }
 
