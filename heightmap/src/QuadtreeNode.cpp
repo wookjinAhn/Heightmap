@@ -2,67 +2,82 @@
 // Created by wj on 22. 4. 8..
 //
 
-#include "../include/Node.h"
+#include "../include/QuadtreeNode.h"
 
-namespace quadtree
+namespace camel
 {
-    Node::Node(Boundary boundary, int depth, int capacity)
-        : mBoundary(boundary)
-        , mDepth(depth)
-        , mCapacity(capacity)
+    QuadtreeNode::QuadtreeNode(Boundary boundary, int depth, int capacity)
+            : mBoundary(boundary)
+            , mDepth(depth)
+            , mCapacity(capacity)
     {
+        mCapacityPoints.reserve(mCapacity);
     }
 
-    Node::Node(Boundary boundary, int depth)
-        : mBoundary(boundary)
-        , mDepth(depth)
+    QuadtreeNode::QuadtreeNode(Boundary boundary, int depth)
+            : mBoundary(boundary)
+            , mDepth(depth)
+    {
+        mCapacity = 1;
+        mCapacityPoints.reserve(mCapacity);
+    }
+
+    QuadtreeNode::QuadtreeNode(HeightmapNode* heightmap, Boundary boundary, int depth, int capacity)
+            : mHeightmap(heightmap)
+            , mBoundary(boundary)
+            , mDepth(depth)
+            , mCapacity(capacity)
+    {
+        mCapacityPoints.reserve(mCapacity);
+    }
+
+    QuadtreeNode::QuadtreeNode(HeightmapNode* heightmap, Boundary boundary, int depth)
+            : mHeightmap(heightmap)
+            , mBoundary(boundary)
+            , mDepth(depth)
     {
         mCapacity = 1;
     }
 
-    Node::~Node()
+    QuadtreeNode::~QuadtreeNode()
     {
         for (int i = 0; i < mPoints.size(); i++) {
             delete mPoints[i];
         }
         mPoints.clear();
 
-        delete mHeightmap;
-        mHeightmap = nullptr;
+//        delete mHeightmap;
+//        mHeightmap = nullptr;
     }
 
-    Boundary Node::GetBoundary() const
+    Boundary QuadtreeNode::GetBoundary() const
     {
         return mBoundary;
     }
 
-    void Node::SetBoundary(Boundary const boundary)
+    void QuadtreeNode::SetBoundary(Boundary const boundary)
     {
         mBoundary = boundary;
     }
 
-    void Node::SetBoundary(float const x, float const z, float const w, float const h)
+    void QuadtreeNode::SetBoundary(float const x, float const z, float const w, float const h)
     {
         mBoundary.SetBoundary(x, z, w, h);
     }
 
-    void Node::SetDepth(int const depth)
+    void QuadtreeNode::SetDepth(int const depth)
     {
         mDepth = depth;
     }
 
-    void Node::SetCapacity(int const capacity)
+    void QuadtreeNode::SetCapacity(int const capacity)
     {
         mCapacity = capacity;
     }
 
-    void Node::SetPoints(std::vector<Point3D*> const points)
+    void QuadtreeNode::SetHeightmap(camel::HeightmapNode* const heightmap)
     {
-        mPoints = points;
-    }
-
-    void Node::SetHeightmap(quadtree::Heightmap* const heightmap)
-    {
+        std::cout << heightmap << std::endl;
         if (!mHeightmap)
         {
             mHeightmap = heightmap;
@@ -74,20 +89,22 @@ namespace quadtree
         }
     }
 
-    void Node::InsertPoints(std::vector<Point3D*> points)
+    void QuadtreeNode::InsertPoints(std::vector<Point3D*> points)
     {
         for (int i = 0; i < points.size(); i++)
         {
             int depth = 0;
+//            insertNode(points[i], mHeightmap, depth);
             insertNode(points[i], mHeightmap, depth);
         }
 
-        mHeightmap->MakeMapToVector();
+//        mHeightmap->MakeMapToVector();
     }
 
-    std::vector<Point3D*> Node::SamplingPoints(std::vector<Point3D *> inputPoints, int samplingNum)
+    std::vector<Point3D*> QuadtreeNode::SamplingPoints(std::vector<Point3D*> inputPoints, int samplingNum)
     {
         std::vector<Point3D*> samplingPoints;
+        samplingPoints.reserve(samplingNum);
 
         std::vector<int> sample(inputPoints.size());
         std::iota(sample.begin(), sample.end(), 0);
@@ -109,7 +126,7 @@ namespace quadtree
         return samplingPoints;
     }
 
-    std::vector<Point3D*> Node::ReadPCDToVector(std::string inputPath)
+    std::vector<Point3D*> QuadtreeNode::ReadPCDToVector(const std::string& inputPath)
     {
         mPoints.reserve(307200);
 
@@ -141,7 +158,7 @@ namespace quadtree
         return mPoints;
     }
 
-    void Node::WriteVectorToPCD(const std::string &outputPath)
+    void QuadtreeNode::WriteVectorToPCD(const std::string& outputPath)
     {
         time_t t;
         struct tm* timeinfo;
@@ -180,7 +197,7 @@ namespace quadtree
         fout.close();
     }
 
-    void Node::subdivide()
+    void QuadtreeNode::subdivide()
     {
         float x = mBoundary.GetX();
         float z = mBoundary.GetZ();
@@ -192,15 +209,15 @@ namespace quadtree
         Boundary sw(x - w / 2, z - h / 2, w / 2, h / 2);
         Boundary se(x + w / 2, z - h / 2, w / 2, h / 2);
 
-        mNW = std::make_unique<Node>(nw, mDepth, mCapacity);
-        mNE = std::make_unique<Node>(ne, mDepth, mCapacity);
-        mSW = std::make_unique<Node>(sw, mDepth, mCapacity);
-        mSE = std::make_unique<Node>(se, mDepth, mCapacity);
+        mNW = std::make_unique<QuadtreeNode>(nw, mDepth, mCapacity);
+        mNE = std::make_unique<QuadtreeNode>(ne, mDepth, mCapacity);
+        mSW = std::make_unique<QuadtreeNode>(sw, mDepth, mCapacity);
+        mSE = std::make_unique<QuadtreeNode>(se, mDepth, mCapacity);
 
         mbDivided = true;
     }
 
-    void Node::insertNode(Point3D *point, Heightmap *heightmap, int depth)
+    void QuadtreeNode::insertNode(Point3D* point, HeightmapNode* heightmap, int depth)
     {
         mCapacityPoints.push_back(point);
 
@@ -245,4 +262,5 @@ namespace quadtree
             }
         }
     }
+
 }

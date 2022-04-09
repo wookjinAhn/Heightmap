@@ -8,8 +8,8 @@ add_executable (Heightmap main.cpp)
 target_link_libraries(Heightmap PUBLIC heightmap)
 
 #[[
-add_executable (Heightmap main.cpp)
-target_link_libraries(Heightmap PUBLIC heightmap)
-target_link_directories(Heightmap PUBLIC heightmap/build)
-target_include_directories(Heightmap PUBLIC heightmap/include)
+add_executable (HeightmapNode main.cpp)
+target_link_libraries(HeightmapNode PUBLIC heightmap)
+target_link_directories(HeightmapNode PUBLIC heightmap/build)
+target_include_directories(HeightmapNode PUBLIC heightmap/include)
 ]]

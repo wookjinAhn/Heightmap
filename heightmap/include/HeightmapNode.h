@@ -2,25 +2,28 @@
 // Created by wj on 22. 4. 8..
 //
 
-#ifndef HEIGHTMAP_HEIGHTMAP_H
-#define HEIGHTMAP_HEIGHTMAP_H
+#ifndef HEIGHTMAP_HEIGHTMAPNODE_H
+#define HEIGHTMAP_HEIGHTMAPNODE_H
 
 #include <vector>
 #include <map>
+#include <fstream>
 
 #include "Point3D.h"
 
-namespace quadtree
+namespace camel
 {
-    class Heightmap
+    class HeightmapNode
     {
     public:
-        ~Heightmap();
+        ~HeightmapNode();
 
         std::vector<Point3D*> GetPoints() const;
 
         void MakeHeightMap(Point3D* points);
         void MakeMapToVector();
+
+        void WriteVectorToPCD(const std::string &outputPath);
 
     private:
         std::map<std::pair<float, float>, float> mMapPair;
@@ -28,4 +31,4 @@ namespace quadtree
     };
 }
 
-#endif //HEIGHTMAP_HEIGHTMAP_H
+#endif //HEIGHTMAP_HEIGHTMAPNODE_H

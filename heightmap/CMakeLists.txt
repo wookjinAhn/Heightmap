@@ -7,8 +7,8 @@ add_library (heightmap
     src/Point2D.cpp
     src/Point3D.cpp
     src/Boundary.cpp
-    src/Heightmap.cpp
-    src/Node.cpp
+    src/HeightmapNode.cpp
+    src/QuadtreeNode.cpp
 )
 
 target_include_directories(heightmap PUBLIC include)

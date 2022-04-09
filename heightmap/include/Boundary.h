@@ -7,7 +7,7 @@
 
 #include "Point3D.h"
 
-namespace quadtree
+namespace camel
 {
     class Boundary
     {

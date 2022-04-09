@@ -4,7 +4,7 @@
 
 #include "../include/Point2D.h"
 
-namespace quadtree
+namespace camel
 {
     Point2D::Point2D()
         : mX(0)

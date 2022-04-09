@@ -5,7 +5,7 @@
 #ifndef HEIGHTMAP_POINT2D_H
 #define HEIGHTMAP_POINT2D_H
 
-namespace quadtree
+namespace camel
 {
     class Point2D
     {

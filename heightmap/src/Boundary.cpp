@@ -3,7 +3,7 @@
 //
 #include "../include/Boundary.h"
 
-namespace quadtree
+namespace camel
 {
     Boundary::Boundary()
         : mX(0.0f)

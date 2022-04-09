@@ -7,7 +7,7 @@
 
 #include "../include/Point2D.h"
 
-namespace quadtree
+namespace camel
 {
     class Point3D
     {

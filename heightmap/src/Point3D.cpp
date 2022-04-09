@@ -4,7 +4,7 @@
 
 #include "../include/Point3D.h"
 
-namespace quadtree
+namespace camel
 {
     Point3D::Point3D()
         : mX(0.0f)
