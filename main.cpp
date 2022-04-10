@@ -18,7 +18,7 @@ int main()
     // ----- Read PCD file -----
     std::cout << "Read PCD File : ";
 
-    std::string inputPath = "/home/wj/Desktop/Data/input_data/stair_real.pcd";
+    std::string inputPath = "data/stair_real.pcd";
     start = clock();
 
     std::vector<camel::Point3D*> inputPoints = qt.ReadPCDToVector(inputPath);
@@ -60,7 +60,7 @@ int main()
     std::cout << "Write PCD File : ";
     start = clock();
 
-    std::string outputPath = "/home/wj/Desktop/Data/output_data/";
+    std::string outputPath = "./data/";
 
 	heightmap.WriteVectorToPCD(outputPath);
     end = clock();
