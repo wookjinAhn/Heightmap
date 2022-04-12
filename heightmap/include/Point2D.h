@@ -5,6 +5,8 @@
 #ifndef HEIGHTMAP_POINT2D_H
 #define HEIGHTMAP_POINT2D_H
 
+//#include <camel-euclid/vector/Point2D.h>
+
 namespace camel
 {
     class Point2D

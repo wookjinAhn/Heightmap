@@ -10,6 +10,7 @@
 #include <fstream>
 
 #include "Point3D.h"
+//#include <camel-euclid/vector/Point3D.h>
 
 namespace camel
 {
@@ -18,7 +19,7 @@ namespace camel
     public:
         ~HeightmapNode();
 
-        std::vector<Point3D*> GetPoints() const;
+        std::vector<CamelVector::Point3D*> GetPoints() const;
 
         void MakeHeightMap(Point3D* points);
         void MakeMapToVector();
@@ -27,7 +28,7 @@ namespace camel
 
     private:
         std::map<std::pair<float, float>, float> mMapPair;
-        std::vector<Point3D*> mPoints;
+        std::vector<CamelVector::Point3D*> mPoints;
     };
 }
 

@@ -6,6 +6,7 @@
 #define HEIGHTMAP_POINT3D_H
 
 #include "../include/Point2D.h"
+//#include <camel-euclid/vector/Point2D.h>
 
 namespace camel
 {
