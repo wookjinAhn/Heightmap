@@ -1,8 +1,4 @@
 #include "heightmap/include/QuadtreeNode.h"
-#include "heightmap/include/Point2D.h"
-#include "heightmap/include/Point3D.h"
-#include "heightmap/include/Boundary.h"
-#include <iostream>
 
 int main()
 {
