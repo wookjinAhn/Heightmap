@@ -47,7 +47,7 @@ namespace camel
 
         void InsertPoints(std::vector<Point3D*> points);
         std::vector<Point3D*> SamplingPoints(std::vector<Point3D*> inputPoints, int samplingNum);
-        std::vector<Point3D*> ReadPCDToVector(const std::string& inputPath);      // modified
+        std::vector<Point3D*> ReadPCDToVector(const std::string& inputPath, float cameraAngle);      // modified
         void WriteVectorToPCD(const std::string& outputPath);
 
     private:

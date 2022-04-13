@@ -94,45 +94,20 @@ namespace camel
         for (int i = 0; i < points.size(); i++)
         {
             int depth = 0;
-//            insertNode(points[i], mHeightmap, depth);
             insertNode(points[i], mHeightmap, depth);
         }
-
-//        mHeightmap->MakeMapToVector();
     }
 
-    std::vector<Point3D*> QuadtreeNode::SamplingPoints(std::vector<Point3D*> inputPoints, int samplingNum)
-    {
-        std::vector<Point3D*> samplingPoints;
-        samplingPoints.reserve(samplingNum);
-
-        std::vector<int> sample(inputPoints.size());
-        std::iota(sample.begin(), sample.end(), 0);
-        std::shuffle(sample.begin(), sample.end(), std::mt19937{std::random_device{}()});
-
-        float degree = -45.0f;
-        float rotationMatrix[3][3] = { {1.0f, 0.0f, 0.0f},
-                                       {0.0f, (float)std::cos(degree * D2R), (float)-std::sin(degree * D2R)},
-                                       {0.0f, (float)std::sin(degree * D2R), (float)std::cos(degree * D2R)} };
-
-        for (int i = 0; i < samplingNum; i++)
-        {
-            inputPoints[sample[i]]->SetXYZ(rotationMatrix[0][0] * inputPoints[sample[i]]->GetX() + rotationMatrix[0][1] * inputPoints[sample[i]]->GetY() + rotationMatrix[0][2] * inputPoints[sample[i]]->GetZ(),
-                                           rotationMatrix[1][0] * inputPoints[sample[i]]->GetX() + rotationMatrix[1][1] * inputPoints[sample[i]]->GetY() + rotationMatrix[1][2] * inputPoints[sample[i]]->GetZ(),
-                                           rotationMatrix[1][0] * inputPoints[sample[i]]->GetX() + rotationMatrix[2][1] * inputPoints[sample[i]]->GetY() + rotationMatrix[2][2] * inputPoints[sample[i]]->GetZ());
-            samplingPoints.push_back(inputPoints[sample[i]]);
-        }
-
-        return samplingPoints;
-    }
-
-    std::vector<Point3D*> QuadtreeNode::ReadPCDToVector(const std::string& inputPath)
+    std::vector<Point3D*> QuadtreeNode::ReadPCDToVector(const std::string& inputPath, float cameraAngle)
     {
         mPoints.reserve(307200);
 
+        float rotationMatrix[3][3] = { {1.0f, 0.0f, 0.0f},
+                                       {0.0f, (float)std::cos(cameraAngle * D2R), (float)-std::sin(cameraAngle * D2R)},
+                                       {0.0f, (float)std::sin(cameraAngle * D2R), (float)std::cos(cameraAngle * D2R)} };
+
         std::ifstream fin;
         fin.open(inputPath);
-
         std::string line;
 
         if (fin.is_open())
@@ -147,7 +122,10 @@ namespace camel
                     std::istringstream iss(line);
                     iss >> x >> y >> z;
 
-                    Point3D* pointXYZ = new Point3D(x, y, z);
+                    Point3D* pointXYZ = new Point3D(rotationMatrix[2][0] * x + rotationMatrix[2][1] * y + rotationMatrix[2][2] * z,
+                                                    -(rotationMatrix[0][0] * x + rotationMatrix[0][1] * y + rotationMatrix[0][2] * z),
+                                                    -(rotationMatrix[1][0] * x + rotationMatrix[1][1] * y + rotationMatrix[1][2] * z));
+
                     mPoints.push_back(pointXYZ);
                 }
                 num++;
@@ -156,6 +134,23 @@ namespace camel
         fin.close();
 
         return mPoints;
+    }
+
+    std::vector<Point3D*> QuadtreeNode::SamplingPoints(std::vector<Point3D*> inputPoints, int samplingNum)
+    {
+        std::vector<Point3D*> samplingPoints;
+        samplingPoints.reserve(samplingNum);
+
+        std::vector<int> sample(inputPoints.size());
+        std::iota(sample.begin(), sample.end(), 0);
+        std::shuffle(sample.begin(), sample.end(), std::mt19937{std::random_device{}()});
+
+        for (int i = 0; i < samplingNum; i++)
+        {
+            samplingPoints.push_back(inputPoints[sample[i]]);
+        }
+
+        return samplingPoints;
     }
 
     void QuadtreeNode::WriteVectorToPCD(const std::string& outputPath)
@@ -200,14 +195,14 @@ namespace camel
     void QuadtreeNode::subdivide()
     {
         float x = mBoundary.GetX();
-        float z = mBoundary.GetZ();
+        float y = mBoundary.GetY();
         float w = mBoundary.GetW();
         float h = mBoundary.GetH();
 
-        Boundary nw(x - w / 2, z + h / 2, w / 2, h / 2);
-        Boundary ne(x + w / 2, z + h / 2, w / 2, h / 2);
-        Boundary sw(x - w / 2, z - h / 2, w / 2, h / 2);
-        Boundary se(x + w / 2, z - h / 2, w / 2, h / 2);
+        Boundary nw(x - w / 2, y + h / 2, w / 2, h / 2);
+        Boundary ne(x + w / 2, y + h / 2, w / 2, h / 2);
+        Boundary sw(x - w / 2, y - h / 2, w / 2, h / 2);
+        Boundary se(x + w / 2, y - h / 2, w / 2, h / 2);
 
         mNW = std::make_unique<QuadtreeNode>(nw, mDepth, mCapacity);
         mNE = std::make_unique<QuadtreeNode>(ne, mDepth, mCapacity);
@@ -241,22 +236,22 @@ namespace camel
                 mCapacityPoints.pop_back();
                 if (mNW->mBoundary.IsConstained(qPoint))
                 {
-                    qPoint->SetEndNodeXZ(mNW->GetBoundary().GetX(), mNW->GetBoundary().GetZ());
-                    mNW->insertNode(qPoint, heightmap, ++depth);
+                    qPoint->SetEndNodeXY(mNW->GetBoundary().GetX(), mNW->GetBoundary().GetY());
+                    mNW->insertNode(qPoint, heightmap, ++depth);        // heightmap parameter ->
                 }
                 else if (mNE->mBoundary.IsConstained(qPoint))
                 {
-                    qPoint->SetEndNodeXZ(mNE->GetBoundary().GetX(), mNE->GetBoundary().GetZ());
+                    qPoint->SetEndNodeXY(mNE->GetBoundary().GetX(), mNE->GetBoundary().GetY());
                     mNE->insertNode(qPoint, heightmap, ++depth);
                 }
                 else if (mSW->mBoundary.IsConstained(qPoint))
                 {
-                    qPoint->SetEndNodeXZ(mSW->GetBoundary().GetX(), mSW->GetBoundary().GetZ());
+                    qPoint->SetEndNodeXY(mSW->GetBoundary().GetX(), mSW->GetBoundary().GetY());
                     mSW->insertNode(qPoint, heightmap, ++depth);
                 }
                 else if (mSE->mBoundary.IsConstained(qPoint))
                 {
-                    qPoint->SetEndNodeXZ(mSE->GetBoundary().GetX(), mSE->GetBoundary().GetZ());
+                    qPoint->SetEndNodeXY(mSE->GetBoundary().GetX(), mSE->GetBoundary().GetY());
                     mSE->insertNode(qPoint, heightmap, ++depth);
                 }
             }

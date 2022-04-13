@@ -7,7 +7,7 @@ namespace camel
 {
     Boundary::Boundary()
         : mX(0.0f)
-        , mZ(0.0f)
+        , mY(0.0f)
         , mW(0.0f)
         , mH(0.0f)
     {
@@ -15,17 +15,17 @@ namespace camel
 
     Boundary::Boundary(float x, float z, float w, float h)
         : mX(x)
-        , mZ(z)
+        , mY(z)
         , mW(w)
         , mH(h)
     {
     }
 
-    Boundary::Boundary(float minX, float maxX, float z)
-        : mX((maxX + minX) / 2)
-        , mZ(z / 2)
-        , mW((maxX - minX) / 2)
-        , mH(z / 2)
+    Boundary::Boundary(float x, float minY, float maxY)
+        : mX(x / 2)
+        , mY((maxY + minY) / 2)
+        , mW(x / 2)
+        , mH((maxY - minY) / 2)
     {
     }
 
@@ -34,9 +34,9 @@ namespace camel
         return mX;
     }
 
-    float Boundary::GetZ() const
+    float Boundary::GetY() const
     {
-        return mZ;
+        return mY;
     }
 
     float Boundary::GetW() const
@@ -49,16 +49,16 @@ namespace camel
         return mH;
     }
 
-    void Boundary::SetBoundary(const float x, const float z, const float w, const float h)
+    void Boundary::SetBoundary(const float x, const float y, const float w, const float h)
     {
         mX = x;
-        mZ = z;
+        mY = y;
         mW = w;
         mH = h;
     }
 
     bool Boundary::IsConstained(Point3D *p) const
     {
-        return (p->GetX() >= mX - mW && p->GetX() < mX + mW && p->GetZ() >= mZ - mH && p->GetZ() < mZ + mH);
+        return (p->GetX() >= mX - mW && p->GetX() < mX + mW && p->GetY() >= mY - mH && p->GetY() < mY + mH);
     }
 }

@@ -3,9 +3,11 @@ project(Heightmap)
 
 set(CMAKE_CXX_STANDARD 14)
 
-add_subdirectory(heightmap)
+find_package(camel-euclid REQUIRED)
+
+add_subdirectory(heightmap/src)
 add_executable (Heightmap main.cpp)
-target_link_libraries(Heightmap PUBLIC heightmap)
+target_link_libraries(Heightmap heightmap camel-euclid-vector)
 
 #[[
 add_executable (HeightmapNode main.cpp)

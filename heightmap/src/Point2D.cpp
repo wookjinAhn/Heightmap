@@ -7,35 +7,12 @@
 namespace camel
 {
     Point2D::Point2D()
-        : mX(0)
-        , mZ(0)
+        : CamelVector::Vector2D()
     {
     }
 
-    Point2D::Point2D(float x, float z)
-        : mX(x)
-        , mZ(z)
+    Point2D::Point2D(float x, float y)
+        : CamelVector::Vector2D(x, y)
     {
     }
-
-    float Point2D::GetX() const
-    {
-        return mX;
-    }
-
-    float Point2D::GetZ() const
-    {
-        return mZ;
-    }
-
-    void Point2D::SetX(const float x)
-    {
-        mX = x;
-    }
-
-    void Point2D::SetZ(const float z)
-    {
-        mZ = z;
-    }
-
 }

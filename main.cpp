@@ -1,30 +1,35 @@
 #include "heightmap/include/QuadtreeNode.h"
+#include "heightmap/include/Point2D.h"
+#include "heightmap/include/Point3D.h"
+#include "heightmap/include/Boundary.h"
+#include <iostream>
 
 int main()
 {
     clock_t start;
     clock_t end;
 
-    float MIN_X = -1.0f;
-    float MAX_X = 1.0f;
-    float Z = 2.0f;
+    float X = 2.0f;
+    float MIN_Y = -1.0f;
+    float MAX_Y = 1.0f;
     int DEPTH = 6;
-    camel::Boundary boundary(MIN_X, MAX_X, Z);
-
+    camel::Boundary boundary(X, MIN_Y, MAX_Y);
 	camel::HeightmapNode heightmap;
     camel::QuadtreeNode qt(&heightmap, boundary, DEPTH);
-//    qt.SetHeightmap(&heightmap);
+
+    float cameraAngle = -45.0f;
 
     // ----- Read PCD file -----
     std::cout << "Read PCD File : ";
 
-    std::string inputPath = "data/stair_real.pcd";
+    std::string inputPath = "/home/wj/Desktop/Data/input_data/stair_real.pcd";
     start = clock();
 
-    std::vector<camel::Point3D*> inputPoints = qt.ReadPCDToVector(inputPath);
+    std::vector<camel::Point3D*> inputPoints = qt.ReadPCDToVector(inputPath, cameraAngle);
 
     end = clock();
     std::cout << ((double)(end - start)) / (long)CLOCKS_PER_SEC << " sec" << std::endl;
+
 
     // ----- sampling -----
     std::cout << "Sampling : ";
@@ -35,16 +40,17 @@ int main()
     end = clock();
     std::cout << ((double)(end - start)) / (long)CLOCKS_PER_SEC << " sec" << std::endl;
 
-    // ----- Insert in Quadtree -----
+
+//     ----- Insert in Quadtree -----
     std::cout << "Insert in Quadtree : ";
 
     start = clock();
 
-//    qt.InsertPoints(samplingPoints);
     qt.InsertPoints(samplingPoints);
 
     end = clock();
     std::cout << ((double)(end - start)) / (long)CLOCKS_PER_SEC << " sec" << std::endl;
+
 
     // ----- Make HeightmapNode -----
     std::cout << "Make HeightmapNode : ";
@@ -56,11 +62,12 @@ int main()
     end = clock();
     std::cout << ((double)(end - start)) / (long)CLOCKS_PER_SEC << " sec" << std::endl;
 
+
     // ----- Write PCD file -----
     std::cout << "Write PCD File : ";
     start = clock();
 
-    std::string outputPath = "./data/";
+    std::string outputPath = "/home/wj/Desktop/Data/output_data/";
 
 	heightmap.WriteVectorToPCD(outputPath);
     end = clock();

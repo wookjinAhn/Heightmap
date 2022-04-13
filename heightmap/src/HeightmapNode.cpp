@@ -6,31 +6,36 @@
 
 namespace camel
 {
-    HeightmapNode::~HeightmapNode()
-    {
-        for (int i = 0; i < mPoints.size(); i++) {
-            delete mPoints[i];
-        }
-        mPoints.clear();
-    }
+//    HeightmapNode::~HeightmapNode()
+//    {
+//        for (int i = 0; i < mPoints.size(); i++) {
+//            delete mPoints[i];
+//        }
+//        mPoints.clear();
+//    }
 
     std::vector<Point3D*> HeightmapNode::GetPoints() const
     {
         return mPoints;
     }
 
-    void HeightmapNode::MakeHeightMap(Point3D *points)
+    void HeightmapNode::SetPoints(Point3D* point)
     {
-        if (mMapPair.find(std::make_pair(points->GetEndNodeXZ().GetX(), points->GetEndNodeXZ().GetZ())) == mMapPair.end())	// exist
+        mPoints.push_back(point);
+    }
+
+    void HeightmapNode::MakeHeightMap(Point3D* points)
+    {
+        if (mMapPair.find(std::make_pair(points->GetEndNodeXY().GetX(), points->GetEndNodeXY().GetY())) == mMapPair.end())	// exist
         {
-            mMapPair.insert({ std::make_pair(points->GetEndNodeXZ().GetX(), points->GetEndNodeXZ().GetZ()), points->GetY() });
+            mMapPair.insert({ std::make_pair(points->GetEndNodeXY().GetX(), points->GetEndNodeXY().GetY()), points->GetZ() });
         }
         else	// not exist
         {
-            float beforeHeight = mMapPair.find(std::make_pair(points->GetEndNodeXZ().GetX(), points->GetEndNodeXZ().GetZ()))->second;
-            if (beforeHeight > points->GetY())
+            float beforeHeight = mMapPair.find(std::make_pair(points->GetEndNodeXY().GetX(), points->GetEndNodeXY().GetY()))->second;
+            if (beforeHeight < points->GetZ())
             {
-                mMapPair.find(std::make_pair(points->GetEndNodeXZ().GetX(), points->GetEndNodeXZ().GetZ()))->second = points->GetY();
+                mMapPair.find(std::make_pair(points->GetEndNodeXY().GetX(), points->GetEndNodeXY().GetY()))->second = points->GetZ();
             }
         }
     }
@@ -40,7 +45,7 @@ namespace camel
         for (auto iter = mMapPair.begin(); iter != mMapPair.end(); ++iter)
         {
             Point3D* pointXYZ = new Point3D;
-            pointXYZ->SetXYZ(iter->first.first, iter->second, iter->first.second);
+            pointXYZ->SetXYZ(iter->first.first, iter->first.second, iter->second);
             mPoints.push_back(pointXYZ);
         }
     }
