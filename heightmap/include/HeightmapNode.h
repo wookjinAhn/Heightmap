@@ -19,7 +19,7 @@ namespace camel
     public:
         ~HeightmapNode();
 
-        std::vector<CamelVector::Point3D*> GetPoints() const;
+        std::vector<Point3D*> GetPoints() const;
 
         void MakeHeightMap(Point3D* points);
         void MakeMapToVector();
@@ -28,7 +28,7 @@ namespace camel
 
     private:
         std::map<std::pair<float, float>, float> mMapPair;
-        std::vector<CamelVector::Point3D*> mPoints;
+        std::vector<Point3D*> mPoints;
     };
 }
 
